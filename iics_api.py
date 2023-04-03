@@ -37,7 +37,8 @@ target_auth_data = {'username': target_user, 'password': target_password}
 
 source_auth_response = requests.post(source_auth_url, data=json.dumps(source_auth_data), headers=headers)
 target_auth_response = requests.post(target_auth_url, data=json.dumps(target_auth_data), headers=headers)
-print(source_auth_response)
+print("login response: ",source_auth_response)
+print("login response: ",target_auth_response)
 
 
 src_login_response=source_auth_response.json()
@@ -82,8 +83,8 @@ for src_tag in src_tag_list:
     tagged_mappings_response=requests.get(tagged_mappings_url,headers={'INFA-SESSION-ID': src_sesh_id})
     json_response=tagged_mappings_response.json()
     tagged_mappings.append(json_response)
-print("tagged mappings:")
-print(tagged_mappings)
+# print("tagged mappings:")
+# print(tagged_mappings)
 
 
 
@@ -96,8 +97,8 @@ for obj in tagged_mappings:
         map_name = path[idx+1:]
         ids_with_tags_names[item['id']] = {'map_name': map_name, 'tags': item['tags']}
       
-print("ids with tagnames: ")
-print(ids_with_tags_names)
+# print("ids with tagnames: ")
+# print(ids_with_tags_names)
 
 #export###################
 
@@ -107,35 +108,42 @@ export_data={
 }
 
 new_objects=[]
-# print("(Type 'Y' or 'N')")
-# param=input("Do you want to include Dependencies: ")
 
-# if param=='Y':
-#     for key in ids_with_tags_names:
-#          new_object={"id" : key,
-#                     "includeDependencies" : True}
-#          new_objects.append(new_object)
-# elif param=='N':
-#     for key in ids_with_tags_names:
-#          new_object={"id" : key,
-#                     "includeDependencies" :False}
-#          new_objects.append(new_object)
-# else:
-#     print("enter only 'Y' or 'N' " )
+
+
+while True:
+    print("(Type 'Y' or 'N')")
+    param=input("Do you want to include Dependencies: ")
+    if param=='Y' or  param=='y':
+        for key in ids_with_tags_names:
+             new_object={"id" : key,
+                        "includeDependencies" : True}
+             new_objects.append(new_object)
+        break
+    elif param=='N' or  param=='n':
+        print("Prompt: Make Sure that the Target IICS ORG contains neccessary Connections and Agent Group ")
+        for key in ids_with_tags_names:
+             new_object={"id" : key,
+                        "includeDependencies" :False}
+             new_objects.append(new_object)
+        break
+    else:
+        print("Invalid input. Please enter 'Y' or 'N' !")
+
+
     
 
-# for key in ids_with_tags_names:
-#     new_object={"id" : key,
-#     new_objects.append(new_object)    
 
-for key in ids_with_tags_names:
-    new_object={"id" : key}
-    new_objects.append(new_object)
+
+# for key in ids_with_tags_names:
+#     new_object={"id" : key}
+#     new_objects.append(new_object)
 
 export_data["objects"] += new_objects
 payload = json.dumps(export_data)
-print("payload")
-print(payload)
+# print("payload")
+# print(payload)
+
 
 
 headers_export= {
@@ -241,7 +249,6 @@ tgt_mappings=tgt_mappings_response.json()
 # print("")
 # print(tgt_mappings)
 for obj in tgt_mappings['objects']:
-    # index = obj['path'].rfind('/')
     path = item['path']
     idx = path.rfind('/')
     obj['path'] = obj['path'][idx+1:]
