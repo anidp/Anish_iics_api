@@ -257,18 +257,21 @@ for obj in tgt_mappings['objects']:
 # print(tgt_mappings)
 
 id_tag_mapping = {}
+print("ids with tag and names", ids_with_tags_names)
+print("tgt mappings",tgt_mappings)
 
 for id, data in ids_with_tags_names.items():
     for obj in tgt_mappings['objects']:
         if obj['path'] == data['map_name']:
             id_tag_mapping[id] = {
                 'id': obj['id'],
-                'tag': data['tags'][0] if data['tags'] else None
+                'tag': data['tags'] 
             }
             break
         
-# print("id tag mapping:")
-# print(id_tag_mapping)
+print("id tag mapping:")
+print(id_tag_mapping)
+
 # print("")
 
 
@@ -286,12 +289,12 @@ headers_tag = {
 for key , value in id_tag_mapping.items():
     tag_data={
         "id":value['id'],
-        "tags": [value ['tag']]
+        "tags": value ['tag']
     }
     import_jobs_data.append(tag_data)
 
-# print("import jobs data:")
-# print(import_jobs_data)
+print("import jobs data:")
+print(import_jobs_data)
 
 tag_response = requests.post(tgt_tag_url, headers=headers_tag, json=import_jobs_data)
 print(f"tag response= {tag_response}")
