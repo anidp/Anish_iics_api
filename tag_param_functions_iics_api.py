@@ -34,12 +34,14 @@ def export_mappings(baseApiUrl, sesh_id, export_data):
         'INFA-SESSION-ID': sesh_id
     }
     response = requests.post(f"{baseApiUrl}/public/core/v3/export", headers=headers, data=payload)
+    print(f"export response = {response}")
     return response.json()['id']
 
 def get_export_status(baseApiUrl, sesh_id, export_job_id):
     """Return the export status of the specified job"""
     url = f"{baseApiUrl}/public/core/v3/export/{export_job_id}"
     response = requests.get(url, headers={'INFA-SESSION-ID': sesh_id}, data={})
+    print(f"export status response = {response}")
     return response.json()
 
 def export_download(export_job_id):
@@ -57,6 +59,7 @@ def export_download(export_job_id):
     with open(file_path, "wb") as f:    
         f.write(export_download_response.content)
     time.sleep(5)
+    print(f"export download response = {export_download_response}")
     return export_zip_file_name
 
 def upload_import_job(export_zip_file_name,file_path):
@@ -167,17 +170,20 @@ headers_import_status = {
 
 # src_tag_list = list(set([tag for tags in [tag['tags'] for tag in src_mappings['objects']] for tag in tags if tag]))
 
-src_tag=input("enter tag name: ")
-# tagged_mappings_url = f"{src_baseApiUrl}/public/core/v3/objects?q=tag=='{src_tag}'"
-# tagged_mappings_response=requests.get(tagged_mappings_url,headers={'INFA-SESSION-ID': src_sesh_id})
-# tagged_mappings=tagged_mappings_response.json()
+while True:
+    src_tag=input("enter tag name: ")
+    tagged_mappings=get_tagged_mappings(src_baseApiUrl, src_sesh_id, src_tag)
+    # print("tagged mappings:")
+    # print(tagged_mappings)
+    first_key = list(tagged_mappings.keys())[0]
+    if first_key!='error': 
+        break
+    else:
+        print("PROMPT: Invalid Tag Name")
+        print("Please Enter a Valid Tag Name")
+        continue
+        
 
-tagged_mappings=get_tagged_mappings(src_baseApiUrl, src_sesh_id, src_tag)
-print("tagged mappings:")
-print(tagged_mappings['error'])
-
-if tagged_mappings['error'] :
-    raise KeyError(f"'{src_tag}' is an invalid tag")
 
 
 
