@@ -54,8 +54,8 @@ src_sesh_id=src_login_response['userInfo']['sessionId']
 tgt_sesh_id=tgt_login_response['userInfo']['sessionId']
 
 
-src_main_id=src_login_response ['userInfo']['id']
-tgt_main_id=tgt_login_response ['userInfo']['id']
+# src_main_id=src_login_response ['userInfo']['id']
+# tgt_main_id=tgt_login_response ['userInfo']['id']
 
 
 # Get list of mappings with the specified tag from source user
@@ -73,7 +73,7 @@ src_tag_list = [tag for tags in src_tag_list for tag in tags] # Flatten the list
 src_tag_list = [tag for tag in src_tag_list if tag] # Remove null or empty values
 src_tag_list = list(set(src_tag_list)) # Remove duplicate values
 # print (src_tag_list)
-
+#comment 70 to 75
 
 tagged_mappings=[]
 
@@ -83,6 +83,7 @@ for src_tag in src_tag_list:
     tagged_mappings_response=requests.get(tagged_mappings_url,headers={'INFA-SESSION-ID': src_sesh_id})
     json_response=tagged_mappings_response.json()
     tagged_mappings.append(json_response)
+
 # print("tagged mappings:")
 # print(tagged_mappings)
 
@@ -108,9 +109,6 @@ export_data={
 }
 
 new_objects=[]
-
-
-
 while True:
     print("(Type 'Y' or 'N')")
     param=input("Do you want to include Dependencies: ")
@@ -129,11 +127,6 @@ while True:
         break
     else:
         print("Invalid input. Please enter 'Y' or 'N' !")
-
-
-    
-
-
 
 # for key in ids_with_tags_names:
 #     new_object={"id" : key}
@@ -237,7 +230,7 @@ payload = json.dumps({
 })
 import_job_response=requests.post(import_status_url,headers= headers_import_status,data=payload)
 
-print(f"import job response= {import_response}")
+print(f"import job response= {import_job_response}")
 
 
 time.sleep(10)
@@ -257,8 +250,8 @@ for obj in tgt_mappings['objects']:
 # print(tgt_mappings)
 
 id_tag_mapping = {}
-print("ids with tag and names", ids_with_tags_names)
-print("tgt mappings",tgt_mappings)
+# print("ids with tag and names", ids_with_tags_names)
+# print("tgt mappings",tgt_mappings)
 
 for id, data in ids_with_tags_names.items():
     for obj in tgt_mappings['objects']:
@@ -269,8 +262,8 @@ for id, data in ids_with_tags_names.items():
             }
             break
         
-print("id tag mapping:")
-print(id_tag_mapping)
+# print("id tag mapping:")
+# print(id_tag_mapping)
 
 # print("")
 
@@ -293,8 +286,8 @@ for key , value in id_tag_mapping.items():
     }
     import_jobs_data.append(tag_data)
 
-print("import jobs data:")
-print(import_jobs_data)
+# print("import jobs data:")
+# print(import_jobs_data)
 
 tag_response = requests.post(tgt_tag_url, headers=headers_tag, json=import_jobs_data)
 print(f"tag response= {tag_response}")
