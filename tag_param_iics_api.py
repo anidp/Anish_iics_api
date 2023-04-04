@@ -63,47 +63,46 @@ tgt_sesh_id=tgt_login_response['userInfo']['sessionId']
 
 
 # Get list of mappings with the specified tag from source user
-source_mappings_url = f"{src_baseApiUrl}/public/core/v3/objects?q=location=='Default'"  
+# source_mappings_url = f"{src_baseApiUrl}/public/core/v3/objects?q=location=='Default'"  
 
-source_mappings_response = requests.get(source_mappings_url, headers={'INFA-SESSION-ID': src_sesh_id})
-src_mappings=source_mappings_response.json()
-# print(src_mappings)
+# source_mappings_response = requests.get(source_mappings_url, headers={'INFA-SESSION-ID': src_sesh_id})
+# src_mappings=source_mappings_response.json()
+# # print(src_mappings)
 
 
 #extracting tags into a list
-src_tag_list=[tag['tags'] for tag in src_mappings['objects']] #contains null and duplicates
+# src_tag_list=[tag['tags'] for tag in src_mappings['objects']] #contains null and duplicates
 
-src_tag_list = [tag for tags in src_tag_list for tag in tags] # Flatten the list of lists
-src_tag_list = [tag for tag in src_tag_list if tag] # Remove null or empty values
-src_tag_list = list(set(src_tag_list)) # Remove duplicate values
+# src_tag_list = [tag for tags in src_tag_list for tag in tags] # Flatten the list of lists
+# src_tag_list = [tag for tag in src_tag_list if tag] # Remove null or empty values
+# src_tag_list = list(set(src_tag_list)) # Remove duplicate values
 # print (src_tag_list)
 #comment 70 to 75
 
-tagged_mappings=[]
+
 
 #extracting only mappings with tags
-for src_tag in src_tag_list:
-    tagged_mappings_url = f"{src_baseApiUrl}/public/core/v3/objects?q=tag=='{src_tag}'"
-    tagged_mappings_response=requests.get(tagged_mappings_url,headers={'INFA-SESSION-ID': src_sesh_id})
-    json_response=tagged_mappings_response.json()
-    tagged_mappings.append(json_response)
+# for src_tag in src_tag_list:
+src_tag=input("enter tag name: ")
+tagged_mappings_url = f"{src_baseApiUrl}/public/core/v3/objects?q=tag=='{src_tag}'"
+tagged_mappings_response=requests.get(tagged_mappings_url,headers={'INFA-SESSION-ID': src_sesh_id})
+tagged_mappings=tagged_mappings_response.json()
 
-# print("tagged mappings:")
-# print(tagged_mappings)
-
+print("tagged mappings:")
+print(tagged_mappings)
 
 
 #fetching tagged ids, names and tags of tagged mappings
 ids_with_tags_names={}
-for obj in tagged_mappings:
-    for item in obj['objects']:
-        path = item['path']
-        idx = path.rfind('/')
-        map_name = path[idx+1:]
-        ids_with_tags_names[item['id']] = {'map_name': map_name, 'tags': item['tags']}
+for obj in tagged_mappings['objects']:
+    path = obj ['path']
+    idx = path.rfind('/')
+    map_name = path[idx+1:]
+    ids_with_tags_names[obj['id']] = {'map_name': map_name, 'tags': obj['tags']}
       
-# print("ids with tagnames: ")
-# print(ids_with_tags_names)
+print("ids with tagnames: ")
+print(ids_with_tags_names)
+
 
 #export###################
 
@@ -246,7 +245,7 @@ tgt_mappings=tgt_mappings_response.json()
 # print("")
 # print(tgt_mappings)
 for obj in tgt_mappings['objects']:
-    path = item['path']
+    path = obj['path']
     idx = path.rfind('/')
     obj['path'] = obj['path'][idx+1:]
 

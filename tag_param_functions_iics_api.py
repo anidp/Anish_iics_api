@@ -161,16 +161,38 @@ headers_import_status = {
 
 # Get list of mappings with tags from source user
 
-src_mappings_url = f"{src_baseApiUrl}/public/core/v3/objects?q=location=='Default'"
-src_mappings_response = requests.get(src_mappings_url, headers={'INFA-SESSION-ID': src_sesh_id})
-src_mappings = src_mappings_response.json()
+# src_mappings_url = f"{src_baseApiUrl}/public/core/v3/objects?q=location=='Default'"
+# src_mappings_response = requests.get(src_mappings_url, headers={'INFA-SESSION-ID': src_sesh_id})
+# src_mappings = src_mappings_response.json()
 
-src_tag_list = list(set([tag for tags in [tag['tags'] for tag in src_mappings['objects']] for tag in tags if tag]))
+# src_tag_list = list(set([tag for tags in [tag['tags'] for tag in src_mappings['objects']] for tag in tags if tag]))
+
+src_tag=input("enter tag name: ")
+# tagged_mappings_url = f"{src_baseApiUrl}/public/core/v3/objects?q=tag=='{src_tag}'"
+# tagged_mappings_response=requests.get(tagged_mappings_url,headers={'INFA-SESSION-ID': src_sesh_id})
+# tagged_mappings=tagged_mappings_response.json()
+
+tagged_mappings=get_tagged_mappings(src_baseApiUrl, src_sesh_id, src_tag)
+print("tagged mappings:")
+print(tagged_mappings['error'])
+
+if tagged_mappings['error'] :
+    raise KeyError(f"'{src_tag}' is an invalid tag")
 
 
-tagged_mappings = [get_tagged_mappings(src_baseApiUrl, src_sesh_id, tag) for tag in src_tag_list]
 
-ids_with_tags_names = {item['id']: {'map_name': item['path'].split('/')[-1], 'tags': item['tags']} for obj in tagged_mappings for item in obj['objects']}
+#fetching tagged ids, names and tags of tagged mappings
+ids_with_tags_names={}
+for obj in tagged_mappings['objects']:
+    path = obj ['path']
+    idx = path.rfind('/')
+    map_name = path[idx+1:]
+    ids_with_tags_names[obj['id']] = {'map_name': map_name, 'tags': obj['tags']}
+      
+# print("ids with tagnames: ")
+# print(ids_with_tags_names)
+
+
 export_data={
     "name" : f"movingjob_{current_date}_{current_time}",
     "objects" :[]
@@ -200,9 +222,9 @@ while True:
 export_data["objects"] += new_objects
 
 export_jobId=export_mappings(src_baseApiUrl, src_sesh_id, export_data)
-print(export_jobId)
+# print(export_jobId)
 export_status_response=get_export_status(src_baseApiUrl, src_sesh_id, export_jobId)
-print(export_status_response)
+# print(export_status_response)
 
 file_name=export_download(export_jobId)
 file_path=os.path.join(output_dir,file_name)
