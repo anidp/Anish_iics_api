@@ -231,8 +231,7 @@ for obj in tgt_mappings['objects']:
 # print(tgt_mappings)
 
 id_tag_mapping = {}
-# print("ids with tag and names", ids_with_tags_names)
-# print("tgt mappings",tgt_mappings)
+
 
 for id, data in ids_with_tags_names.items():
     for obj in tgt_mappings['objects']:
